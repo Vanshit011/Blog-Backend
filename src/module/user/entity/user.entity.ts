@@ -1,7 +1,7 @@
 import { BaseEntity } from '../../../shared/entity/base.entity';
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import { UserRole } from '../../../shared/constants/enum';
-
+import { Blog } from '../../blog/entity/blog.entity';
 @Entity('users')
 export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
@@ -39,4 +39,7 @@ export class User extends BaseEntity {
     default: UserRole.USER,
   })
   role: UserRole;
+
+  @OneToMany(() => Blog, (blog) => blog.author)
+  blogs: Blog[];
 }

@@ -15,6 +15,10 @@ import {
 } from 'firebase/auth';
 import { SignupDto, LoginDto } from './dto/auth-credentials.dto';
 import { User } from '../user/entity/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Token } from './entity/token.entity';
+import { Repository } from 'typeorm';
+import { JwtTokenPayload } from '../../shared/constants/types';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +26,8 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly firebaseService: FirebaseService,
+    @InjectRepository(Token)
+    private readonly tokenRepository: Repository<Token>,
   ) {}
 
   async googleLogin(googleUser: GoogleUser, requiredRole: UserRole) {
@@ -63,7 +69,7 @@ export class AuthService {
       });
     }
 
-    return this.generateAuthResponse(user, requiredRole);
+    return await this.generateAuthResponse(user, requiredRole);
   }
 
   async signup(credentials: SignupDto, requiredRole: UserRole) {
@@ -86,7 +92,7 @@ export class AuthService {
         last_login: new Date(),
       });
 
-      return this.generateAuthResponse(user, requiredRole);
+      return await this.generateAuthResponse(user, requiredRole);
     } catch (error: unknown) {
       let message = 'Unknown signup error';
       if (error instanceof Error) {
@@ -122,25 +128,45 @@ export class AuthService {
         );
       }
 
-      this.userService
-        .update(user.id, {
-          firebase_id: firebaseUser.uid,
-          last_login: new Date(),
-        })
-        .catch((err) => console.error('Login update failed', err));
+      await this.userService.update(user.id, {
+        firebase_id: firebaseUser.uid,
+        last_login: new Date(),
+      });
 
-      return this.generateAuthResponse(user, requiredRole);
-    } catch {
-      console.log('An error occurred');
+      return await this.generateAuthResponse(user, requiredRole);
+    } catch (error: unknown) {
+      console.error('Login error:', error);
+      let message = 'Login failed';
+      if (error instanceof Error) {
+        message = error.message;
+      }
+      throw new UnauthorizedException(message);
     }
   }
 
-  private generateAuthResponse(user: User, requiredRole: UserRole) {
+  private async generateAuthResponse(user: User, requiredRole: UserRole) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role,
     };
+
+    const accessToken = this.jwtService.sign(payload);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const decodedToken: JwtTokenPayload = Object(
+      this.jwtService.decode(accessToken),
+    );
+    const expiresAt = decodedToken?.exp
+      ? new Date(decodedToken.exp * 1000)
+      : undefined;
+
+    const tokenEntity = this.tokenRepository.create({
+      token: accessToken,
+      user: user,
+      expires_at: expiresAt,
+    });
+
+    await this.tokenRepository.save(tokenEntity);
 
     return {
       message: `${requiredRole.charAt(0).toUpperCase() + requiredRole.slice(1)} logged in successfully`,
@@ -150,7 +176,7 @@ export class AuthService {
         display_name: user.display_name,
         photo_url: user.photo_url,
       },
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
     };
   }
 }
