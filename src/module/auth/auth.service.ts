@@ -160,13 +160,31 @@ export class AuthService {
       ? new Date(decodedToken.exp * 1000)
       : undefined;
 
-    const tokenEntity = this.tokenRepository.create({
-      token: accessToken,
-      user: user,
-      expires_at: expiresAt,
+    // Check if a valid token already exists for this user
+    const existingToken = await this.tokenRepository.findOne({
+      where: { user: { id: user.id } },
     });
 
-    await this.tokenRepository.save(tokenEntity);
+    let tokenEntity: Token;
+
+    if (
+      existingToken &&
+      existingToken.expires_at &&
+      existingToken.expires_at > new Date()
+    ) {
+      // Token exists and is not expired, update it
+      existingToken.token = accessToken;
+      existingToken.expires_at = expiresAt || null;
+      tokenEntity = await this.tokenRepository.save(existingToken);
+    } else {
+      // Token doesn't exist or is expired, create a new one
+      tokenEntity = this.tokenRepository.create({
+        token: accessToken,
+        user: user,
+        expires_at: expiresAt,
+      });
+      await this.tokenRepository.save(tokenEntity);
+    }
 
     return {
       message: `${requiredRole.charAt(0).toUpperCase() + requiredRole.slice(1)} logged in successfully`,

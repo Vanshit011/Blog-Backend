@@ -19,3 +19,8 @@ export interface GoogleUser {
   picture: string;
   accessToken: string;
 }
+export interface AdminBlogQueryParams {
+  page: number;
+  limit: number;
+  search: string;
+}
