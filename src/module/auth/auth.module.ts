@@ -8,9 +8,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from '../user/user.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Token } from './entity/token.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([Token]),
     ConfigModule,
     UserModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),

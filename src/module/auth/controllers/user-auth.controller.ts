@@ -44,7 +44,7 @@ export class AuthController {
     const role = state.role === 'admin' ? UserRole.ADMIN : UserRole.USER;
 
     const result = await this.authService.googleLogin(user, role);
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const frontendUrl = process.env.FRONTEND_URL;
 
     const redirectPath = role === UserRole.ADMIN ? '/admin/login' : '/login';
     return res.redirect(
