@@ -8,7 +8,7 @@ export class Token extends BaseEntity {
   token: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  expires_at: Date;
+  expires_at: Date | null;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })

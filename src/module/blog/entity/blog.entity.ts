@@ -21,7 +21,7 @@ export class Blog extends BaseEntity {
   })
   status: string;
 
-  @ManyToOne(() => User, (user) => user.blogs)
+  @ManyToOne('User', (user: User) => user.blogs)
   @JoinColumn({ name: 'author_id' })
   author: User;
 }
