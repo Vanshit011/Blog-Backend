@@ -24,6 +24,9 @@
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/typeorm.config.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.87.0",
+    "@google/genai": "^1.49.0",
+    "@google/generative-ai": "^0.24.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.0.1",
@@ -37,6 +40,7 @@
     "firebase": "^12.11.0",
     "joi": "^18.1.2",
     "jsonwebtoken": "^9.0.3",
+    "node-fetch": "^3.3.2",
     "passport-google-oauth20": "^2.0.0",
     "passport-jwt": "^4.0.1",
     "pg": "^8.20.0",

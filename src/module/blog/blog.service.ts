@@ -6,14 +6,22 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Like } from 'typeorm';
 
+import { AIService } from '../ai/ai.service';
+
 @Injectable()
 export class BlogService {
   constructor(
     @InjectRepository(Blog)
     private readonly blogRepository: Repository<Blog>,
+    private readonly aiService: AIService,
   ) {}
 
   async create(createBlogDto: CreateBlogDto): Promise<Blog> {
+    if (!createBlogDto.slug) {
+      createBlogDto.slug = await this.aiService.generateSlug(
+        createBlogDto.title,
+      );
+    }
     const blog = this.blogRepository.create(createBlogDto);
     return this.blogRepository.save(blog);
   }
@@ -62,6 +70,7 @@ export class BlogService {
       where: {
         title: search ? Like(`%${search}%`) : undefined,
         deleted_at: IsNull(),
+        status: 'published',
       },
       relations: ['author'],
       select: {
@@ -70,6 +79,7 @@ export class BlogService {
         content: true,
         slug: true,
         status: true,
+        coverImage: true,
         created_at: true,
         updated_at: true,
         author: {

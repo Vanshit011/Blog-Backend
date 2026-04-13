@@ -10,8 +10,12 @@ export class CreateBlogDto {
   content: string;
 
   @IsString()
-  @IsNotEmpty()
-  slug: string;
+  @IsOptional()
+  slug?: string;
+
+  @IsString()
+  @IsOptional()
+  coverImage?: string;
 
   @IsObject()
   @IsOptional()
