@@ -1,19 +1,11 @@
 import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class UpdateBlogDto {
+export class GenerateContentDto {
   @IsString()
   @IsNotEmpty()
   title: string;
 
   @IsString()
-  @IsNotEmpty()
-  content: string;
-
-  @IsString()
-  @IsNotEmpty()
-  slug: string;
-
-  @IsString()
   @IsOptional()
-  coverImage?: string;
+  keywords?: string;
 }

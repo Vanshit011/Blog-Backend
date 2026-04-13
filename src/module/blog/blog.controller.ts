@@ -18,9 +18,27 @@ import { Roles } from '../../shared/decorators/roles.decorator';
 import { UserRole } from '../../shared/constants/enum';
 import { GetUser } from '../../shared/decorators/get-user.decorator';
 import { AdminBlogQueryParams } from '../../shared/constants/types';
+import { AIService } from '../ai/ai.service';
+import { GenerateContentDto } from './dto/generate-content.dto';
+
 @Controller('blog')
 export class BlogController {
-  constructor(private readonly blogService: BlogService) {}
+  constructor(
+    private readonly blogService: BlogService,
+    private readonly aiService: AIService,
+  ) {}
+
+  //generate ai content
+  @Post('generate-content')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async generateContent(@Body() generateContentDto: GenerateContentDto) {
+    const content = await this.aiService.generateBlogContent(
+      generateContentDto.title,
+      generateContentDto.keywords,
+    );
+    return { content };
+  }
 
   //create blog
   @Post('create')

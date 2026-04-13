@@ -21,6 +21,9 @@ export class Blog extends BaseEntity {
   })
   status: string;
 
+  @Column({ name: 'cover_image', type: 'varchar', length: 500, nullable: true })
+  coverImage: string;
+
   @ManyToOne('User', (user: User) => user.blogs)
   @JoinColumn({ name: 'author_id' })
   author: User;
