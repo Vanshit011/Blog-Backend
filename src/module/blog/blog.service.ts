@@ -5,6 +5,7 @@ import { Repository, IsNull } from 'typeorm';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Like } from 'typeorm';
+import { statusbar } from '../../shared/constants/enum';
 
 import { AIService } from '../ai/ai.service';
 
@@ -112,5 +113,36 @@ export class BlogService {
 
   async softDelete(id: string): Promise<void> {
     await this.blogRepository.softDelete(id);
+  }
+
+  async findPublishedByAuthor(
+    authorId: string,
+    options: { page: number; limit: number; search: string },
+  ) {
+    const { page, limit, search } = options;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.blogRepository.findAndCount({
+      where: {
+        author: { id: authorId },
+        title: search ? Like(`%${search}%`) : undefined,
+        status: statusbar.PUBLISHED,
+        deleted_at: IsNull(),
+      },
+      order: {
+        created_at: 'DESC',
+      },
+      take: limit,
+      skip: skip,
+    });
+
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 }

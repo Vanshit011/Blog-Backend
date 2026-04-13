@@ -41,4 +41,21 @@ export class UserService {
     }
     return updatedUser;
   }
+
+  async findByIdOrUsername(identifier: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({
+      where: [{ id: identifier }, { username: identifier }],
+      select: {
+        id: true,
+        first_name: true,
+        last_name: true,
+        display_name: true,
+        photo_url: true,
+        about: true,
+        username: true,
+        created_at: true,
+      },
+    });
+    return user;
+  }
 }
