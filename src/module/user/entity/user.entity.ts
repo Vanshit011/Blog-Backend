@@ -30,6 +30,12 @@ export class User extends BaseEntity {
   @Column({ type: 'character varying', length: 255, nullable: true })
   photo_url: string;
 
+  @Column({ type: 'text', nullable: true })
+  about: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
+  username: string;
+
   @Column({ type: 'timestamp', nullable: true })
   last_login: Date;
 
