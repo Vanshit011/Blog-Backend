@@ -13,6 +13,7 @@ export class GoogleAuthGuard extends AuthGuard('google') {
     const role = request.path.includes('admin') ? 'admin' : 'user';
     return {
       state: JSON.stringify({ role }),
+      prompt: 'select_account',
     };
   }
 }

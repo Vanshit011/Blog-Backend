@@ -8,6 +8,7 @@ import { Like } from 'typeorm';
 import { statusbar } from '../../shared/constants/enum';
 
 import { AIService } from '../ai/ai.service';
+import { NotificationService } from '../notifications/notifications.service';
 
 @Injectable()
 export class BlogService {
@@ -15,6 +16,7 @@ export class BlogService {
     @InjectRepository(Blog)
     private readonly blogRepository: Repository<Blog>,
     private readonly aiService: AIService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async create(createBlogDto: CreateBlogDto): Promise<Blog> {
@@ -24,7 +26,16 @@ export class BlogService {
       );
     }
     const blog = this.blogRepository.create(createBlogDto);
-    return this.blogRepository.save(blog);
+    const savedBlog = await this.blogRepository.save(blog);
+
+    if (savedBlog.status === statusbar.PUBLISHED) {
+      await this.notificationService.notifyAllUsers(
+        'New Blog Published',
+        `Check out our new blog: ${savedBlog.title}`,
+      );
+    }
+
+    return savedBlog;
   }
 
   async findByAuthor(
@@ -71,7 +82,7 @@ export class BlogService {
       where: {
         title: search ? Like(`%${search}%`) : undefined,
         deleted_at: IsNull(),
-        status: 'published',
+        status: statusbar.PUBLISHED,
       },
       relations: ['author'],
       select: {
@@ -107,8 +118,23 @@ export class BlogService {
   }
 
   async update(id: string, updateBlogDto: UpdateBlogDto): Promise<Blog | null> {
+    const oldBlog = await this.blogRepository.findOne({ where: { id } });
     await this.blogRepository.update(id, updateBlogDto);
-    return this.findById(id);
+    const updatedBlog = await this.findById(id);
+
+    if (
+      updatedBlog &&
+      oldBlog &&
+      oldBlog.status !== statusbar.PUBLISHED &&
+      updatedBlog.status === statusbar.PUBLISHED
+    ) {
+      await this.notificationService.notifyAllUsers(
+        'New Blog Published',
+        `Check out our new blog: ${updatedBlog.title}`,
+      );
+    }
+
+    return updatedBlog;
   }
 
   async softDelete(id: string): Promise<void> {

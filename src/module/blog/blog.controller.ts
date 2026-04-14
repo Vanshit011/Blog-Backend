@@ -93,4 +93,14 @@ export class BlogController {
   async deleteBlog(@Param('id') id: string) {
     return this.blogService.softDelete(id);
   }
+
+  //get author blogs
+  @Get('author/:id')
+  async getAuthorBlogs(@Param('id') id: string) {
+    return this.blogService.findPublishedByAuthor(id, {
+      page: 1,
+      limit: 10,
+      search: '',
+    });
+  }
 }

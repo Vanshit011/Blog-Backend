@@ -19,7 +19,7 @@ export class Blog extends BaseEntity {
     enum: statusbar,
     default: statusbar.DRAFT,
   })
-  status: string;
+  status: statusbar;
 
   @Column({ name: 'cover_image', type: 'varchar', length: 500, nullable: true })
   coverImage: string;

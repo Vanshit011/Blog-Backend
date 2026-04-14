@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
 import { BlogService } from './blog.service';
+import { AIService } from '../ai/ai.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../user/entity/user.entity';
 import { Blog } from './entity/blog.entity';
+import { AIModule } from '../ai/ai.module';
+import { NotificationModule } from '../notifications/notifications.module';
 import { BlogController } from './blog.controller';
 
-import { AIModule } from '../ai/ai.module';
-
 @Module({
-  imports: [TypeOrmModule.forFeature([Blog, User]), AIModule],
+  imports: [TypeOrmModule.forFeature([Blog]), AIModule, NotificationModule],
   controllers: [BlogController],
-  providers: [BlogService],
+  providers: [BlogService, AIService],
   exports: [BlogService],
 })
 export class BlogModule {}
