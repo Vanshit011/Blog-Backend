@@ -2,6 +2,9 @@ import { BaseEntity } from '../../../shared/entity/base.entity';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { UserRole } from '../../../shared/constants/enum';
 import { Blog } from '../../blog/entity/blog.entity';
+import { Like } from '../../like/entity/like.entity';
+import { Comment } from '../../comment/entity/comment.entity';
+
 @Entity('users')
 export class User extends BaseEntity {
   @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
@@ -48,4 +51,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Blog, (blog) => blog.author)
   blogs: Blog[];
+
+  @OneToMany(() => Like, (like) => like.user)
+  likes: Like[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }
