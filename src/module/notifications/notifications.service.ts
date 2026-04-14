@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entity/notifications.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/entity/user.entity';
+import { UserRole } from '../../shared/constants/enum';
 
 @Injectable()
 export class NotificationService {
@@ -27,12 +28,15 @@ export class NotificationService {
   }
 
   async notifyAllUsers(title: string, message: string): Promise<void> {
-    const users = await this.userRepository.find();
+    const users = await this.userRepository.find({
+      where: { role: UserRole.USER },
+    });
     const notifications = users.map((user) =>
       this.notificationRepository.create({
         user: { id: user.id },
         title,
         message,
+        isRead: false,
       }),
     );
     await this.notificationRepository.save(notifications);
