@@ -28,6 +28,12 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  // Get public profile
+  @Get(':identifier')
+  async getPublicProfile(@Param('identifier') identifier: string) {
+    return this.userService.findByIdOrUsername(identifier);
+  }
+
   //get author blogs
   @Get(':id/blogs')
   async getAuthorBlogs(@Param('id') id: string) {
