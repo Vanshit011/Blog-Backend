@@ -4,14 +4,10 @@ import { JwtAuthGuard } from '../../shared/guards/jwt-auth.guard';
 import { GetUser } from 'src/shared/decorators/get-user.decorator';
 import { User } from './entity/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { BlogService } from '../blog/blog.service';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly blogService: BlogService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
@@ -32,15 +28,5 @@ export class UserController {
   @Get(':identifier')
   async getPublicProfile(@Param('identifier') identifier: string) {
     return this.userService.findByIdOrUsername(identifier);
-  }
-
-  //get author blogs
-  @Get(':id/blogs')
-  async getAuthorBlogs(@Param('id') id: string) {
-    return this.blogService.findPublishedByAuthor(id, {
-      page: 1,
-      limit: 10,
-      search: '',
-    });
   }
 }

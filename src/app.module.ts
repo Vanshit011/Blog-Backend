@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './module/user/user.module';
 import { AuthModule } from './module/auth/auth.module';
 import { BlogModule } from './module/blog/blog.module';
+import { NotificationModule } from './module/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BlogModule } from './module/blog/blog.module';
     UserModule,
     AuthModule,
     BlogModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
