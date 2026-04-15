@@ -54,4 +54,20 @@ export class LikeService {
 
     return { message: 'Blog unliked successfully' };
   }
+
+  async getLikes(blogId: string, userId?: string) {
+    const count = await this.likeRepository.count({
+      where: { blog: { id: blogId } },
+    });
+
+    let isLiked = false;
+    if (userId) {
+      const existing = await this.likeRepository.findOne({
+        where: { user: { id: userId }, blog: { id: blogId } },
+      });
+      isLiked = !!existing;
+    }
+
+    return { count, isLiked };
+  }
 }

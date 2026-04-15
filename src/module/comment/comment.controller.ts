@@ -5,6 +5,7 @@ import {
   Delete,
   UseGuards,
   Body,
+  Get,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { GetUser } from '../../shared/decorators/get-user.decorator';
@@ -33,6 +34,14 @@ export class CommentController {
     );
   }
 
+  @Get('blog/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.USER)
+  async getComments(@Param('id') id: string) {
+    return this.commentService.getComments(id);
+  }
+
+  // comment.controller.ts
   @Delete(':commentId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER)

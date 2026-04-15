@@ -1,4 +1,8 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Comment } from './entity/comment.entity';
@@ -56,13 +60,30 @@ export class CommentService {
     return { message: 'Comment added successfully' };
   }
 
+  async getComments(id: string) {
+    const comments = await this.commentRepository.find({
+      where: { blog: { id } },
+      relations: ['user'],
+      order: { created_at: 'DESC' },
+    });
+
+    return comments.map((comment) => ({
+      id: comment.id,
+      userId: comment.user?.id,
+      display_name: comment.user?.display_name,
+      content: comment.content,
+      created_at: comment.created_at,
+    }));
+  }
+
   async deleteComment(userId: string, commentId: string) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
       relations: ['user'],
     });
+
     if (!comment) {
-      throw new BadRequestException('Comment not found');
+      throw new NotFoundException('Comment not found');
     }
 
     if (comment.user.id !== userId) {
@@ -71,7 +92,7 @@ export class CommentService {
       );
     }
 
-    await this.commentRepository.delete(comment);
+    await this.commentRepository.delete(commentId);
 
     return { message: 'Comment deleted successfully' };
   }
