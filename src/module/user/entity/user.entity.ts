@@ -4,6 +4,7 @@ import { UserRole } from '../../../shared/constants/enum';
 import { Blog } from '../../blog/entity/blog.entity';
 import { Like } from '../../like/entity/like.entity';
 import { Comment } from '../../comment/entity/comment.entity';
+import { Follow } from '../../follow/entity/follow.entity';
 
 @Entity('users')
 export class User extends BaseEntity {
@@ -57,4 +58,10 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
+
+  @OneToMany(() => Follow, (follow) => follow.following)
+  followers: Follow[];
+
+  @OneToMany(() => Follow, (follow) => follow.follower)
+  following: Follow[];
 }
