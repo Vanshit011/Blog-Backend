@@ -11,6 +11,7 @@ import { BlogModule } from './module/blog/blog.module';
 import { NotificationModule } from './module/notifications/notifications.module';
 import { LikeModule } from './module/like/like.module';
 import { CommentModule } from './module/comment/comment.module';
+import { FollowModule } from './module/follow/follow.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CommentModule } from './module/comment/comment.module';
     NotificationModule,
     LikeModule,
     CommentModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [AppService],
