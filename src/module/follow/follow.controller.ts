@@ -56,14 +56,11 @@ export class FollowController {
   }
 
   // user follow stats
-  @Get('stats/:userId')
+  @Get('stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER)
-  async getFollowStats(
-    @Param('userId') userId: string,
-    @GetUser('id') currentUserId: string,
-  ) {
-    return this.followService.getFollowStats(userId, currentUserId);
+  async getFollowStats(@GetUser('id') userId: string) {
+    return this.followService.getFollowStats(userId);
   }
 
   //admin
@@ -75,7 +72,7 @@ export class FollowController {
     @Param('userId') userId: string,
     @GetUser('id') adminId: string,
   ) {
-    return this.followService.follow(userId, adminId);
+    return this.followService.adminFollow(userId, adminId);
   }
 
   @Delete('admin/unfollow/:userId')
@@ -85,30 +82,27 @@ export class FollowController {
     @Param('userId') userId: string,
     @GetUser('id') adminId: string,
   ) {
-    return this.followService.unfollow(userId, adminId);
+    return this.followService.adminUnfollow(userId, adminId);
   }
 
-  @Get('admin/followers/:userId')
+  @Get('admin/my/followers')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  async adminGetFollowers(@Param('userId') userId: string) {
-    return this.followService.getFollowers(userId);
+  async adminGetFollowers(@GetUser('id') adminId: string) {
+    return this.followService.adminGetFollowers(adminId);
   }
 
-  @Get('admin/following/:userId')
+  @Get('admin/my/following')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  async adminGetFollowing(@Param('userId') userId: string) {
-    return this.followService.getFollowing(userId);
+  async adminGetFollowing(@GetUser('id') adminId: string) {
+    return this.followService.adminGetFollowing(adminId);
   }
 
-  @Get('admin/stats/:userId')
+  @Get('admin/stats')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  async adminGetFollowStats(
-    @Param('userId') userId: string,
-    @GetUser('id') adminId: string,
-  ) {
-    return this.followService.getFollowStats(userId, adminId);
+  async adminGetFollowStats(@GetUser('id') adminId: string) {
+    return this.followService.adminGetFollowStats(adminId);
   }
 }
