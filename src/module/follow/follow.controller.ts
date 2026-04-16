@@ -56,11 +56,14 @@ export class FollowController {
   }
 
   // user follow stats
-  @Get('stats')
+  @Get('stats/:authorId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER)
-  async getFollowStats(@GetUser('id') userId: string) {
-    return this.followService.getFollowStats(userId);
+  async getFollowStats(
+    @Param('authorId') authorId: string,
+    @GetUser('id') userId: string,
+  ) {
+    return this.followService.getFollowStats(authorId, userId);
   }
 
   //admin
@@ -99,10 +102,13 @@ export class FollowController {
     return this.followService.adminGetFollowing(adminId);
   }
 
-  @Get('admin/stats')
+  @Get('admin/stats/:userId')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
-  async adminGetFollowStats(@GetUser('id') adminId: string) {
-    return this.followService.adminGetFollowStats(adminId);
+  async adminGetFollowStats(
+    @Param('userId') userId: string,
+    @GetUser('id') adminId: string,
+  ) {
+    return this.followService.adminGetFollowStats(userId, adminId);
   }
 }

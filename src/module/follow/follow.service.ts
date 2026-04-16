@@ -153,22 +153,22 @@ export class FollowService {
     }
   }
 
-  async getFollowStats(UserId?: string) {
+  async getFollowStats(targetUserId: string, currentUserId?: string) {
     try {
       const followersCount = await this.followRepository.count({
-        where: { following: { id: UserId } },
+        where: { following: { id: targetUserId } },
       });
 
       const followingCount = await this.followRepository.count({
-        where: { follower: { id: UserId } },
+        where: { follower: { id: targetUserId } },
       });
 
       let isFollowing = false;
-      if (UserId && UserId !== UserId) {
+      if (currentUserId && currentUserId !== targetUserId) {
         const follow = await this.followRepository.findOne({
           where: {
-            follower: { id: UserId },
-            following: { id: UserId },
+            follower: { id: currentUserId },
+            following: { id: targetUserId },
           },
         });
         isFollowing = !!follow;
@@ -176,6 +176,7 @@ export class FollowService {
       return { followersCount, followingCount, isFollowing };
     } catch (error) {
       console.log('Error in getFollowStats:', error);
+      throw error;
     }
   }
 
@@ -315,22 +316,22 @@ export class FollowService {
     }
   }
 
-  async adminGetFollowStats(adminId: string) {
+  async adminGetFollowStats(targetUserId: string, adminId?: string) {
     try {
       const followersCount = await this.followRepository.count({
-        where: { following: { id: adminId } },
+        where: { following: { id: targetUserId } },
       });
 
       const followingCount = await this.followRepository.count({
-        where: { follower: { id: adminId } },
+        where: { follower: { id: targetUserId } },
       });
 
       let isFollowing = false;
-      if (adminId && adminId !== adminId) {
+      if (adminId && adminId !== targetUserId) {
         const follow = await this.followRepository.findOne({
           where: {
             follower: { id: adminId },
-            following: { id: adminId },
+            following: { id: targetUserId },
           },
         });
         isFollowing = !!follow;
@@ -338,6 +339,7 @@ export class FollowService {
       return { followersCount, followingCount, isFollowing };
     } catch (error) {
       console.log('Error in getFollowStats:', error);
+      throw error;
     }
   }
 }
