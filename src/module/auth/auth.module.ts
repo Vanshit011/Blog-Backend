@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './controllers/user-auth.controller';
 import { AuthService } from './auth.service';
-import { FirebaseService } from './strategies/firebase.strategy';
+import { FirebaseModule } from '../firebase/firebase.module';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -15,6 +15,7 @@ import { Token } from './entity/token.entity';
   imports: [
     TypeOrmModule.forFeature([Token]),
     ConfigModule,
+    FirebaseModule,
     UserModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -30,7 +31,7 @@ import { Token } from './entity/token.entity';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, FirebaseService, GoogleStrategy, JwtStrategy],
+  providers: [AuthService, GoogleStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

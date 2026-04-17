@@ -63,18 +63,6 @@ export class BlogController {
     return this.blogService.findByAuthor(author_id, query);
   }
 
-  //get all blogs
-  @Get('all')
-  async getAllBlogs(@Query() query: AdminBlogQueryParams) {
-    return this.blogService.findAll(query);
-  }
-
-  //get blog by id
-  @Get(':id')
-  async getBlogById(@Param('id') id: string) {
-    return this.blogService.findById(id);
-  }
-
   //update blog
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -94,13 +82,39 @@ export class BlogController {
     return this.blogService.softDelete(id);
   }
 
-  //get author blogs
-  @Get('author/:id')
-  async getAuthorBlogs(@Param('id') id: string) {
-    return this.blogService.findPublishedByAuthor(id, {
+  //get author Published blogs
+  @Get('author/:authorId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.USER)
+  async getAuthorBlogs(@Param('authorId') authorId: string) {
+    return this.blogService.findPublishedByAuthor(authorId, {
       page: 1,
       limit: 10,
       search: '',
     });
+  }
+
+  //USER
+
+  //get all blogs
+  @Get('all')
+  async getAllBlogs(@Query() query: AdminBlogQueryParams) {
+    return this.blogService.findAll(query);
+  }
+
+  //get blog by id
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.USER)
+  async getBlogById(@Param('id') id: string) {
+    return this.blogService.findById(id);
+  }
+
+  //get blog by category
+  @Get('category/:categoryId')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.USER)
+  async getBlogByCategory(@Param('categoryId') categoryId: string) {
+    return this.blogService.findByCategory(categoryId);
   }
 }

@@ -36,7 +36,7 @@ export class NotificationService {
         user: { id: user.id },
         title,
         message,
-        isRead: false,
+        is_read: false,
       }),
     );
     await this.notificationRepository.save(notifications);
@@ -50,6 +50,6 @@ export class NotificationService {
   }
 
   async markAsRead(notificationId: string): Promise<void> {
-    await this.notificationRepository.update(notificationId, { isRead: true });
+    await this.notificationRepository.update(notificationId, { is_read: true });
   }
 }

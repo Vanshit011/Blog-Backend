@@ -11,7 +11,7 @@ export class Notification extends BaseEntity {
   message: string;
 
   @Column({ type: 'boolean', default: false })
-  isRead: boolean;
+  is_read: boolean;
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })

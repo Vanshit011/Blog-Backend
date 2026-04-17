@@ -33,19 +33,26 @@ export class AIService {
 
     try {
       const result = await this.model.generateContent(prompt);
-      const response = await result.response;
+      const response = result.response;
       return response.text();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Gemini API Error:', error);
 
-      if (error?.status === 429 || error?.message?.includes('429')) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      const errorStatus =
+        typeof error === 'object' && error !== null && 'status' in error
+          ? (error as Record<string, unknown>).status
+          : undefined;
+
+      if (errorStatus === 429 || errorMessage.includes('429')) {
         throw new InternalServerErrorException(
           'AI rate limit reached. Please wait a moment and try again later.',
         );
       }
 
       throw new InternalServerErrorException(
-        error?.message || 'Failed to generate content from AI.',
+        errorMessage || 'Failed to generate content from AI.',
       );
     }
   }
@@ -76,7 +83,7 @@ export class AIService {
     return this.generateText(prompt);
   }
 
-  async generateSlug(title: string): Promise<string> {
+  generateSlug(title: string): string {
     return title
       .toLowerCase()
       .trim()

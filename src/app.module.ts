@@ -12,6 +12,8 @@ import { NotificationModule } from './module/notifications/notifications.module'
 import { LikeModule } from './module/like/like.module';
 import { CommentModule } from './module/comment/comment.module';
 import { FollowModule } from './module/follow/follow.module';
+import { FirebaseModule } from './module/firebase/firebase.module';
+import { CategoryModule } from './module/category/category.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { FollowModule } from './module/follow/follow.module';
     LikeModule,
     CommentModule,
     FollowModule,
+    FirebaseModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
