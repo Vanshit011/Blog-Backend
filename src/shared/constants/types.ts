@@ -23,4 +23,5 @@ export interface AdminBlogQueryParams {
   page: number;
   limit: number;
   search: string;
+  category_id?: string;
 }

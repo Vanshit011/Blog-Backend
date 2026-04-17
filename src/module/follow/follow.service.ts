@@ -98,7 +98,7 @@ export class FollowService {
             first_name: true,
             last_name: true,
             display_name: true,
-            username: true,
+            user_name: true,
           },
         },
       });
@@ -110,7 +110,7 @@ export class FollowService {
           first_name: f.follower.first_name,
           last_name: f.follower.last_name,
           display_name: f.follower.display_name,
-          username: f.follower.username,
+          user_name: f.follower.user_name,
           followed_at: f.created_at,
         })),
       };
@@ -132,7 +132,7 @@ export class FollowService {
             first_name: true,
             last_name: true,
             display_name: true,
-            username: true,
+            user_name: true,
           },
         },
       });
@@ -144,7 +144,7 @@ export class FollowService {
           first_name: f.following.first_name,
           last_name: f.following.last_name,
           display_name: f.following.display_name,
-          username: f.following.username,
+          username: f.following.user_name,
           followed_at: f.created_at,
         })),
       };
@@ -261,7 +261,7 @@ export class FollowService {
             first_name: true,
             last_name: true,
             display_name: true,
-            username: true,
+            user_name: true,
           },
         },
       });
@@ -273,7 +273,7 @@ export class FollowService {
           first_name: f.follower.first_name,
           last_name: f.follower.last_name,
           display_name: f.follower.display_name,
-          username: f.follower.username,
+          user_name: f.follower.user_name,
           followed_at: f.created_at,
         })),
       };
@@ -295,7 +295,7 @@ export class FollowService {
             first_name: true,
             last_name: true,
             display_name: true,
-            username: true,
+            user_name: true,
           },
         },
       });
@@ -307,7 +307,7 @@ export class FollowService {
           first_name: f.following.first_name,
           last_name: f.following.last_name,
           display_name: f.following.display_name,
-          username: f.following.username,
+          user_name: f.following.user_name,
           followed_at: f.created_at,
         })),
       };

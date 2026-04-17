@@ -4,16 +4,19 @@ import { FollowService } from './follow.service';
 
 describe('FollowController', () => {
   let controller: FollowController;
-  let service: FollowService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FollowController],
-      providers: [FollowService],
+      providers: [
+        {
+          provide: FollowService,
+          useValue: {}, // Mock if needed
+        },
+      ],
     }).compile();
 
     controller = module.get<FollowController>(FollowController);
-    service = module.get<FollowService>(FollowService);
   });
 
   it('should be defined', () => {

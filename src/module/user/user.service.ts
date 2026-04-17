@@ -3,11 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 
+import { FileUploadService } from './file-upload.service';
+
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly fileUploadService: FileUploadService,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -43,19 +46,37 @@ export class UserService {
   }
 
   async findByIdOrUsername(identifier: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({
-      where: [{ id: identifier }, { username: identifier }],
-      select: {
-        id: true,
-        first_name: true,
-        last_name: true,
-        display_name: true,
-        photo_url: true,
-        about: true,
-        username: true,
-        created_at: true,
-      },
-    });
-    return user;
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id: identifier })
+      .orWhere('user.user_name = :user_name', { user_name: identifier })
+      .select([
+        'user.id',
+        'user.first_name',
+        'user.last_name',
+        'user.display_name',
+        'user.profile_picture',
+        'user.about',
+        'user.user_name',
+        'user.created_at',
+      ])
+      .getOne();
+
+    return user || null;
+  }
+
+  async uploadProfilePicture(userId: string, file: any): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const folder = 'profile-pictures';
+    const profile_picture = await this.fileUploadService.uploadFile(
+      file,
+      folder,
+    );
+
+    return this.update(userId, { profile_picture });
   }
 }

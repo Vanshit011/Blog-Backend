@@ -2,11 +2,13 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
+import { getStorage, FirebaseStorage } from 'firebase/storage';
 
 @Injectable()
 export class FirebaseService implements OnModuleInit {
   private firebaseApp: FirebaseApp;
   private firebaseAuth: Auth;
+  private firebaseStorage: FirebaseStorage;
 
   constructor(private configService: ConfigService) {}
 
@@ -25,9 +27,14 @@ export class FirebaseService implements OnModuleInit {
 
     this.firebaseApp = initializeApp(firebaseConfig);
     this.firebaseAuth = getAuth(this.firebaseApp);
+    this.firebaseStorage = getStorage(this.firebaseApp);
   }
 
   getAuth(): Auth {
     return this.firebaseAuth;
+  }
+
+  getStorage(): FirebaseStorage {
+    return this.firebaseStorage;
   }
 }
