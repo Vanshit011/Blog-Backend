@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from './entity/blog.entity';
-import { Repository, IsNull } from 'typeorm';
+import { IsNull, Repository, SelectQueryBuilder } from 'typeorm';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Like } from 'typeorm';
@@ -250,6 +250,7 @@ export class BlogService {
       .leftJoinAndSelect('blog.category', 'category')
       .where('category.id = :categoryId', { categoryId })
       .andWhere('blog.deleted_at IS NULL')
+      .andWhere('blog.status = :status', { status: statusbar.PUBLISHED })
       .select([
         'blog.id',
         'blog.title',
@@ -265,5 +266,42 @@ export class BlogService {
         'author.profile_picture',
       ])
       .getMany();
+  }
+
+  async getBlogRecommend(categoryId?: string): Promise<Blog[]> {
+    if (!categoryId) {
+      return [];
+    }
+
+    return this.createRecommendQuery()
+      .andWhere('category.id = :categoryId', { categoryId })
+      .orderBy('blog.created_at', 'DESC')
+      .take(3)
+      .getMany();
+  }
+
+  private createRecommendQuery(): SelectQueryBuilder<Blog> {
+    return this.blogRepository
+      .createQueryBuilder('blog')
+      .leftJoinAndSelect('blog.author', 'author')
+      .leftJoinAndSelect('blog.category', 'category')
+      .where('blog.status = :status', { status: statusbar.PUBLISHED })
+      .andWhere('blog.deleted_at IS NULL')
+      .select([
+        'blog.id',
+        'blog.title',
+        'blog.content',
+        'blog.slug',
+        'blog.status',
+        'blog.cover_image',
+        'blog.created_at',
+        'blog.updated_at',
+        'author.id',
+        'author.first_name',
+        'author.last_name',
+        'author.profile_picture',
+        'category.id',
+        'category.name',
+      ]);
   }
 }

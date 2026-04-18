@@ -48,7 +48,7 @@ export class AuthService {
         first_name: googleUser.firstName,
         last_name: googleUser.lastName,
         display_name: `${googleUser.firstName} ${googleUser.lastName}`,
-        profile_picture: googleUser.picture,
+        // profile_picture: googleUser.picture,
         role: requiredRole,
         last_login: new Date(),
       });
@@ -65,7 +65,7 @@ export class AuthService {
         first_name: googleUser.firstName,
         last_name: googleUser.lastName,
         last_login: new Date(),
-        profile_picture: googleUser.picture,
+        // profile_picture: googleUser.picture,
       });
     }
 
