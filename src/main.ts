@@ -13,7 +13,7 @@ async function bootstrap() {
 
   // 🔥 AUTO PORT FIX (no more EADDRINUSE)
   const port = await getPort({
-    port: process.env.PORT ? Number(process.env.PORT) : 3000,
+    port: process.env.PORT ? Number(process.env.PORT) : 3001,
   });
 
   await app.listen(port);

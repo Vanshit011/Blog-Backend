@@ -26,5 +26,5 @@ export class UpdateUserDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  username?: string;
+  user_name?: string;
 }

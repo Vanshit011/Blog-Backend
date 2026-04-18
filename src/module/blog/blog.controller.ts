@@ -102,19 +102,24 @@ export class BlogController {
     return this.blogService.findAll(query);
   }
 
-  //get blog by id
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER)
-  async getBlogById(@Param('id') id: string) {
-    return this.blogService.findById(id);
-  }
-
   //get blog by category
   @Get('category/:categoryId')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.USER)
   async getBlogByCategory(@Param('categoryId') categoryId: string) {
     return this.blogService.findByCategory(categoryId);
+  }
+
+  @Get('recommend')
+  async getBlogRecommend(@Query('categoryId') categoryId?: string) {
+    return this.blogService.getBlogRecommend(categoryId);
+  }
+
+  //get blog by id
+  @Get(':id')
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.USER)
+  async getBlogById(@Param('id') id: string) {
+    return this.blogService.findById(id);
   }
 }
