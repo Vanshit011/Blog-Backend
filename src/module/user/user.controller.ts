@@ -23,11 +23,11 @@ import { UserRole } from '../../shared/constants/enum';
 import { RolesGuard } from '../../shared/guards/roles.guard';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('upload')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async uploadProfilePicture(
@@ -46,12 +46,14 @@ export class UserController {
   }
 
   @Get('profile')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.ADMIN)
   async getMyProfile(@GetUser() user: User) {
     return this.userService.findByIdOrUsername(user.id);
   }
 
   @Patch('profile/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserRole.USER, UserRole.ADMIN)
   async updateProfile(
     @Param('id') id: string,
@@ -61,7 +63,6 @@ export class UserController {
   }
 
   @Get(':id')
-  @Roles(UserRole.USER, UserRole.ADMIN)
   async getPublicProfile(@Param('id') identifier: string) {
     return this.userService.findByIdOrUsername(identifier);
   }

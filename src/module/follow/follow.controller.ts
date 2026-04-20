@@ -57,8 +57,8 @@ export class FollowController {
 
   // user follow stats
   @Get('stats/:authorId')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.USER)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @Roles(UserRole.USER)
   async getFollowStats(
     @Param('authorId') authorId: string,
     @GetUser('id') userId: string,
